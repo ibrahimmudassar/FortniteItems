@@ -1,10 +1,10 @@
+from datetime import date
+from random import randint
+
 import requests
 from bs4 import BeautifulSoup
 from discord_webhook import DiscordEmbed, DiscordWebhook  # Connect to discord
 from environs import Env  # For environment variables
-from datetime import date
-from random import randint
-
 
 # Setting up environment variables
 env = Env()
@@ -74,4 +74,24 @@ def embed_to_discord(titles, items_and_prices_concatenated):
     webhook.execute()
 
 
+def message_alert(find):
+    # Webhooks to send to
+    content = f"{find} Is In! <@265218135798448128>"
+    allowed_mentions = {"users": ["265218135798448128"]}
+
+    webhook = DiscordWebhook(url=env.list(
+        "WEBHOOKS"), content=content, allowed_mentions=allowed_mentions)
+    webhook.execute()
+
+
 embed_to_discord(titles, items_and_prices_concatenated)
+
+is_find_in = False
+find = "Guff"
+for i in items_and_prices_concatenated:
+    if find in i:
+        is_find_in = True
+        break
+
+if is_find_in:
+    message_alert(find)
